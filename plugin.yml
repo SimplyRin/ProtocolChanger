@@ -1,0 +1,5 @@
+main: net.simplyrin.protocolchanger.ProtocolChanger
+name: ProtocolChanger
+version: 1.0.0
+author: SimplyRin
+depend: [ProtocolLib]
