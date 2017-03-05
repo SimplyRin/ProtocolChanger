@@ -7,7 +7,7 @@ Multiplayer で通知(?)される ProtocolName を変更するものです。
 ・BungeeCord での使用
 　前提プラグインは不要です。
  
- # Download
+# Download
  
  https://www.dropbox.com/s/5mdsusro4hrabp3/ProtocolChanger.jar?dl=1
  
