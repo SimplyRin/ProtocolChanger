@@ -14,47 +14,52 @@ import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 
 public class BungeeProtocolChanger extends Plugin implements Listener {
-
-	private BungeeProtocolChanger plugin;
-	private File file_config;
+	private String protocol;
 
 	public void onEnable() {
-		plugin = this;
-
 		try {
 			configuration();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		BungeeCord.getInstance().getPluginManager().registerListener(this, this);
+		getProxy().getPluginManager().registerListener(this, this);
 	}
 
 	private void configuration() throws IOException {
-		if (!plugin.getDataFolder().exists()) {
-			plugin.getDataFolder().mkdir();
+		final File dataFolder = getDataFolder();
+		
+		if (!dataFolder.exists()) {
+			dataFolder.mkdir();
 		}
 
-		File file = new File(getDataFolder(), "config.yml");
-		this.file_config = file;
-
+		final File file = new File(dataFolder, "config.yml");
+		
 		if(!file.exists()) {
 			file.createNewFile();
-
-			Configuration config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
-
-			config.set("protocol", "BungeeCord " + BungeeCord.getInstance().getGameVersion());
-
-			ConfigurationProvider.getProvider( YamlConfiguration.class).save(config, file);
 		}
+		
+		final ConfigurationProvider provider = ConfigurationProvider.getProvider( YamlConfiguration.class);
+		final Configuration config = provicer.load(file);
+
+		if (config.get("protocol") == null) {
+			config.set("protocol", "BungeeCord " + getProxy().getGameVersion());
+
+			provider.save(config, file);
+		}
+		
+		this.config = config.getString("protocol");
 	}
 
 	@EventHandler
-	public void onPing(ProxyPingEvent event) throws IOException {
-		ServerPing ping = event.getResponse();
+	public void onPing(final ProxyPingEvent event) throws IOException {
+		final ServerPing ping = event.getResponse();
 
-		Configuration config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file_config);
-		ping.getVersion().setName(config.getString("protocol"));
+		if (ping == null) {
+			return;
+		}
+		
+		ping.getVersion().setName(protocol);
 	}
 }
 
