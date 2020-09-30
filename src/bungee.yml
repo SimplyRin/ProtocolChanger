@@ -1,0 +1,4 @@
+main: net.simplyrin.protocolchanger.BungeeProtocolChanger
+version: 1.0.0
+name: BungeeProtocolChanger
+author: SimplyRin
