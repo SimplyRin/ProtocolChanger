@@ -14,24 +14,23 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedServerPing;
 
 public class ProtocolChanger extends JavaPlugin implements Listener {
-
-	private ProtocolChanger plugin;
-
+	@Override
 	public void onEnable() {
-		plugin = this;
-
 		saveDefaultConfig();
 
 		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL,
 				Arrays.asList(PacketType.Status.Server.OUT_SERVER_INFO), ListenerOptions.ASYNC) {
-			public void onPacketSending(PacketEvent event) {
-				onPing(event.getPacket().getServerPings().read(0));
+			@Override
+			public void onPacketSending(final PacketEvent event) {
+				if (event.isCancelled()) {
+					return;
+				}
+
+				final WrappedServerPing ping = event.getPacket().getServerPings().read(0);
+				final String name = getConfig().getString("protocol");
+
+				ping.setVersionName(name);
 			}
 		});
-	}
-
-	private void onPing(WrappedServerPing ping) {
-		String name = plugin.getConfig().getString("protocol");
-		ping.setVersionName(name);
 	}
 }
